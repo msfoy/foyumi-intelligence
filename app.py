@@ -42,114 +42,49 @@ image_files = sorted(
     ]
 ) if IMAGE_DIR.exists() else []
 
-# Preferred imagery for the customer booking experience.
-# IMG_1173.HEIC was not suitable for the original public deployment
-# because it was not included among the web-ready image assets. The
-# app therefore checks for the original name first, then the converted
-# WebP/JPEG variants if they have been uploaded to GitHub.
-def find_preferred_image(candidates):
-    if not IMAGE_DIR.exists():
-        return None
-
-    available = {
-        p.name.lower(): p
-        for p in IMAGE_DIR.iterdir()
-        if p.is_file()
-    }
-
-    for candidate in candidates:
-        found = available.get(candidate.lower())
-        if found is not None:
-            return found
-
-    return None
-
-
-BOOKING_IMAGE_1 = find_preferred_image(
-    [
-        "IMG_1173.HEIC",
-        "IMG_1173.HEIC.webp",
-        "IMG_1173.webp",
-        "IMG_1173.jpg",
-        "IMG_1173.jpeg",
-    ]
-)
-
-BOOKING_IMAGE_2 = find_preferred_image(
-    [
-        "IMG_2151.JPG.webp",
-        "IMG_2151.JPG.jpeg",
-        "IMG_2151.JPG",
-        "IMG_2151.webp",
-        "IMG_2151.jpg",
-        "IMG_2151.jpeg",
-    ]
-)
-
-# Customer-facing booking page uses IMG_2151 only.
-# Keeping a single explicit asset prevents a missing/unsupported image
-# from creating a broken-image placeholder in the gallery.
-BOOKING_IMAGES = [p for p in [BOOKING_IMAGE_2] if p is not None]
-
-
-def image_to_data_uri(path):
-    """Convert a local image to an inline data URI for the booking gallery."""
-    try:
-        mime = mimetypes.guess_type(str(path))[0] or "image/jpeg"
-        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
-        return f"data:{mime};base64,{encoded}"
-    except Exception:
-        return None
+# Customer-facing booking image.
+# This is a dedicated square, top-cropped version of IMG_2151 so the
+# subject's full head remains visible while the lower chest is cropped.
+BOOKING_IMAGE = IMAGE_DIR / "IMG_2151_BOOKING.webp"
 
 
 def render_booking_gallery():
-    """Render IMG_2151 in the aligned booking panel."""
-    if not BOOKING_IMAGES:
-        st.markdown(
-            """
-            <div class="booking-gallery single"
-                 style="display:flex;align-items:center;justify-content:center;">
-                <div style="text-align:center;padding:2rem;color:#786B66;">
-                    <div style="font-size:0.72rem;letter-spacing:0.16em;
-                                text-transform:uppercase;font-weight:700;">
-                        FOYUMI
-                    </div>
-                    <div style="margin-top:0.5rem;">
-                        Your glam journey starts here.
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        return
+    """Render the single booking image with a top-focused crop."""
+    if BOOKING_IMAGE.exists():
+        try:
+            encoded = base64.b64encode(
+                BOOKING_IMAGE.read_bytes()
+            ).decode("ascii")
 
-    uri = image_to_data_uri(BOOKING_IMAGES[0])
-    if uri:
-        st.markdown(
-            f'<div class="booking-gallery single">'
-            f'<img src="{uri}" alt="FOYUMI beauty work">'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(
-            """
-            <div class="booking-gallery single"
-                 style="display:flex;align-items:center;justify-content:center;">
-                <div style="text-align:center;padding:2rem;color:#786B66;">
-                    <div style="font-size:0.72rem;letter-spacing:0.16em;
-                                text-transform:uppercase;font-weight:700;">
-                        FOYUMI
-                    </div>
-                    <div style="margin-top:0.5rem;">
-                        Your glam journey starts here.
-                    </div>
+            st.markdown(
+                f'<div class="booking-gallery single">'
+                f'<img src="data:image/webp;base64,{encoded}" '
+                f'alt="FOYUMI beauty work">'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+            return
+        except Exception:
+            pass
+
+    st.markdown(
+        """
+        <div class="booking-gallery single"
+             style="display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;padding:2rem;color:#786B66;">
+                <div style="font-size:0.72rem;letter-spacing:0.16em;
+                            text-transform:uppercase;font-weight:700;">
+                    FOYUMI
+                </div>
+                <div style="margin-top:0.5rem;">
+                    Your glam journey starts here.
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 # ============================================================
 # FOYUMI BRAND SYSTEM
@@ -348,6 +283,7 @@ st.markdown(
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: top center;
         display: block;
         border-radius: 10px;
     }}
