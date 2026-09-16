@@ -86,10 +86,10 @@ BOOKING_IMAGE_2 = find_preferred_image(
     ]
 )
 
-BOOKING_IMAGES = [
-    p for p in [BOOKING_IMAGE_1, BOOKING_IMAGE_2]
-    if p is not None
-]
+# Customer-facing booking page uses IMG_2151 only.
+# Keeping a single explicit asset prevents a missing/unsupported image
+# from creating a broken-image placeholder in the gallery.
+BOOKING_IMAGES = [p for p in [BOOKING_IMAGE_2] if p is not None]
 
 
 def image_to_data_uri(path):
@@ -103,23 +103,32 @@ def image_to_data_uri(path):
 
 
 def render_booking_gallery():
-    """Render the preferred FOYUMI booking images in one aligned panel."""
-    uris = [image_to_data_uri(p) for p in BOOKING_IMAGES]
-    uris = [u for u in uris if u]
-
-    if len(uris) >= 2:
-        images_html = "".join(
-            f'<img src="{uri}" alt="FOYUMI beauty work">'
-            for uri in uris[:2]
-        )
+    """Render IMG_2151 in the aligned booking panel."""
+    if not BOOKING_IMAGES:
         st.markdown(
-            f'<div class="booking-gallery two">{images_html}</div>',
+            """
+            <div class="booking-gallery single"
+                 style="display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;padding:2rem;color:#786B66;">
+                    <div style="font-size:0.72rem;letter-spacing:0.16em;
+                                text-transform:uppercase;font-weight:700;">
+                        FOYUMI
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                        Your glam journey starts here.
+                    </div>
+                </div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
-    elif len(uris) == 1:
+        return
+
+    uri = image_to_data_uri(BOOKING_IMAGES[0])
+    if uri:
         st.markdown(
             f'<div class="booking-gallery single">'
-            f'<img src="{uris[0]}" alt="FOYUMI beauty work">'
+            f'<img src="{uri}" alt="FOYUMI beauty work">'
             f'</div>',
             unsafe_allow_html=True,
         )
