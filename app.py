@@ -40,6 +40,55 @@ image_files = sorted(
     ]
 ) if IMAGE_DIR.exists() else []
 
+# Preferred imagery for the customer booking experience.
+# IMG_1173.HEIC was not suitable for the original public deployment
+# because it was not included among the web-ready image assets. The
+# app therefore checks for the original name first, then the converted
+# WebP/JPEG variants if they have been uploaded to GitHub.
+def find_preferred_image(candidates):
+    if not IMAGE_DIR.exists():
+        return None
+
+    available = {
+        p.name.lower(): p
+        for p in IMAGE_DIR.iterdir()
+        if p.is_file()
+    }
+
+    for candidate in candidates:
+        found = available.get(candidate.lower())
+        if found is not None:
+            return found
+
+    return None
+
+
+BOOKING_IMAGE_1 = find_preferred_image(
+    [
+        "IMG_1173.HEIC",
+        "IMG_1173.HEIC.webp",
+        "IMG_1173.webp",
+        "IMG_1173.jpg",
+        "IMG_1173.jpeg",
+    ]
+)
+
+BOOKING_IMAGE_2 = find_preferred_image(
+    [
+        "IMG_2151.JPG.webp",
+        "IMG_2151.JPG.jpeg",
+        "IMG_2151.JPG",
+        "IMG_2151.webp",
+        "IMG_2151.jpg",
+        "IMG_2151.jpeg",
+    ]
+)
+
+BOOKING_IMAGES = [
+    p for p in [BOOKING_IMAGE_1, BOOKING_IMAGE_2]
+    if p is not None
+]
+
 # ============================================================
 # FOYUMI BRAND SYSTEM
 # ============================================================
@@ -1344,9 +1393,48 @@ elif page == "Book Your Glam":
     )
 
     st.write(
-        "A simple proof-of-concept booking journey designed to make "
-        "customer requests easier to capture in a structured format."
+        "Tell us where you would like your makeup done and what the "
+        "occasion is. Our team will follow up to confirm the details "
+        "and applicable service requirements."
     )
+
+    # ------------------------------------------------------------
+    # CUSTOMER-FACING BOOKING IMAGERY
+    # ------------------------------------------------------------
+
+    if BOOKING_IMAGES:
+        if len(BOOKING_IMAGES) >= 2:
+            img1, img2 = st.columns(2)
+
+            with img1:
+                try:
+                    st.image(
+                        str(BOOKING_IMAGES[0]),
+                        use_container_width=True,
+                    )
+                except Exception:
+                    pass
+
+            with img2:
+                try:
+                    st.image(
+                        str(BOOKING_IMAGES[1]),
+                        use_container_width=True,
+                    )
+                except Exception:
+                    pass
+        else:
+            try:
+                st.image(
+                    str(BOOKING_IMAGES[0]),
+                    use_container_width=True,
+                )
+            except Exception:
+                pass
+
+    # ------------------------------------------------------------
+    # BOOKING FORM
+    # ------------------------------------------------------------
 
     with st.form("booking_form"):
 
@@ -1355,39 +1443,46 @@ elif page == "Book Your Glam":
         name = st.text_input("Full name")
         contact = st.text_input("Phone or email")
 
-        service_choice = st.selectbox(
-            "Service",
+        st.markdown("#### Where would you like your makeup done?")
+
+        booking_location = st.radio(
+            "Booking location",
             [
-                "Studio Makeup",
+                "Studio",
                 "Home Service",
-                "Bridal Makeup",
-                "Event Guest Makeup",
-                "Bridesmaid Makeup",
             ],
+            horizontal=True,
+            label_visibility="collapsed",
         )
 
-        booking_type = st.selectbox(
-            "Booking preference",
-            ["Studio", "Home Service"],
+        st.caption(
+            "For Home Service, our team will confirm your exact location "
+            "and applicable home-service rate after your request."
         )
 
-        if booking_type == "Home Service":
-            axis_choice = st.selectbox(
-                "Home-service area",
-                [
-                    "GRA / Oroazi / Stadium Road / Ada George",
-                    "Peter Odili / Woji YKC / Eliozu / Old GRA / Town",
-                    "Mgbuoba / Rumukoro / Rumudara / Rumuomasi",
-                    "Out of PH — Isiokpo / Elele",
-                    "Out of PH — Okrika / Ogoni",
-                    "Other / To be confirmed",
-                ],
-            )
-        else:
-            axis_choice = "Studio"
+        st.markdown("#### What is the occasion?")
+
+        makeup_occasion = st.selectbox(
+            "Makeup occasion",
+            [
+                "Event Guest",
+                "Bridesmaid",
+                "Birthday",
+                "Clubbing / Night Out",
+                "Other",
+            ],
+            label_visibility="collapsed",
+        )
 
         requested_date = st.date_input("Preferred date")
-        notes = st.text_area("Additional information")
+
+        notes = st.text_area(
+            "Additional information",
+            placeholder=(
+                "Tell us anything we should know about your booking, "
+                "such as your event time, preferred look or other details."
+            ),
+        )
 
         submitted = st.form_submit_button(
             "Submit Booking Request",
@@ -1401,22 +1496,76 @@ elif page == "Book Your Glam":
                     "so FOYUMI can follow up on the request."
                 )
             else:
+                # Deliberately separate booking location from occasion.
+                # Home-service axis is NOT requested from the customer here;
+                # FOYUMI can classify the actual location internally later.
                 st.success(
                     "Booking request captured in the prototype. "
-                    "In a production implementation, this structured "
-                    "record would flow into the FOYUMI booking and "
-                    "customer-management process."
+                    "FOYUMI will follow up to confirm your location, "
+                    "availability and booking details."
                 )
 
                 st.session_state["booking_request"] = {
                     "name": name,
                     "contact": contact,
-                    "service": service_choice,
-                    "booking_type": booking_type,
-                    "area": axis_choice,
+                    "booking_location": booking_location,
+                    "makeup_occasion": makeup_occasion,
                     "date": str(requested_date),
                     "notes": notes,
                 }
+
+    st.markdown("---")
+
+    st.markdown(
+        "<div class='section-title'>What happens next?</div>",
+        unsafe_allow_html=True,
+    )
+
+    step1, step2, step3 = st.columns(3)
+
+    with step1:
+        st.markdown(
+            """
+            <div class="action-card">
+                <div class="eyebrow">01</div>
+                <div class="action-title">Send your request</div>
+                <p>
+                    Tell FOYUMI your preferred makeup location and occasion.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with step2:
+        st.markdown(
+            """
+            <div class="action-card">
+                <div class="eyebrow">02</div>
+                <div class="action-title">We confirm the details</div>
+                <p>
+                    For Home Service, FOYUMI confirms your exact location
+                    and the applicable service requirements.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with step3:
+        st.markdown(
+            """
+            <div class="action-card">
+                <div class="eyebrow">03</div>
+                <div class="action-title">Your glam is confirmed</div>
+                <p>
+                    Once availability and booking details are agreed,
+                    your appointment can be confirmed.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown("---")
 
