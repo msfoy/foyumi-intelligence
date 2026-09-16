@@ -71,7 +71,45 @@ def find_booking_image():
     return None
 
 
+
 BOOKING_IMAGE = find_booking_image()
+
+
+def render_booking_gallery():
+    """
+    Render the single FOYUMI booking image.
+    The fixed tight crop is preferred so the subject's full head remains
+    visible while reducing the amount of lower-body/chest area shown.
+    """
+    if BOOKING_IMAGE is not None and BOOKING_IMAGE.exists():
+        try:
+            st.image(
+                str(BOOKING_IMAGE),
+                use_container_width=True,
+            )
+            return
+        except Exception:
+            pass
+
+    # Keep the layout intact if the image asset is temporarily unavailable.
+    st.markdown(
+        """
+        <div class="action-card" style="
+            min-height: 520px;
+            height: 100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+        ">
+            <div>
+                <div class="eyebrow">FOYUMI</div>
+                <div class="action-title">Your glam journey starts here.</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ============================================================
 # FOYUMI BRAND SYSTEM
