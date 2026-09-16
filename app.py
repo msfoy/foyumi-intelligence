@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import base64
+import mimetypes
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
@@ -88,6 +90,57 @@ BOOKING_IMAGES = [
     p for p in [BOOKING_IMAGE_1, BOOKING_IMAGE_2]
     if p is not None
 ]
+
+
+def image_to_data_uri(path):
+    """Convert a local image to an inline data URI for the booking gallery."""
+    try:
+        mime = mimetypes.guess_type(str(path))[0] or "image/jpeg"
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"data:{mime};base64,{encoded}"
+    except Exception:
+        return None
+
+
+def render_booking_gallery():
+    """Render the preferred FOYUMI booking images in one aligned panel."""
+    uris = [image_to_data_uri(p) for p in BOOKING_IMAGES]
+    uris = [u for u in uris if u]
+
+    if len(uris) >= 2:
+        images_html = "".join(
+            f'<img src="{uri}" alt="FOYUMI beauty work">'
+            for uri in uris[:2]
+        )
+        st.markdown(
+            f'<div class="booking-gallery two">{images_html}</div>',
+            unsafe_allow_html=True,
+        )
+    elif len(uris) == 1:
+        st.markdown(
+            f'<div class="booking-gallery single">'
+            f'<img src="{uris[0]}" alt="FOYUMI beauty work">'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            """
+            <div class="booking-gallery single"
+                 style="display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;padding:2rem;color:#786B66;">
+                    <div style="font-size:0.72rem;letter-spacing:0.16em;
+                                text-transform:uppercase;font-weight:700;">
+                        FOYUMI
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                        Your glam journey starts here.
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 # ============================================================
 # FOYUMI BRAND SYSTEM
@@ -258,6 +311,77 @@ st.markdown(
         color: #8A7A73;
         padding: 3rem 0 1rem;
         font-size: 0.8rem;
+    }}
+
+    /* BOOK YOUR GLAM — aligned image + form layout */
+    .booking-gallery {{
+        width: 100%;
+        height: 690px;
+        overflow: hidden;
+        border: 1px solid #E8DDD8;
+        border-radius: 16px;
+        background: white;
+        box-sizing: border-box;
+    }}
+
+    .booking-gallery.single {{
+        height: 690px;
+    }}
+
+    .booking-gallery.two {{
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        padding: 10px;
+    }}
+
+    .booking-gallery img {{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 10px;
+    }}
+
+    .booking-gallery.two img {{
+        min-height: 0;
+    }}
+
+    /* The form is intentionally the same visual height as the image panel. */
+    div[data-testid="stForm"] {{
+        min-height: 690px;
+        height: 690px;
+        box-sizing: border-box;
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1px solid #E8DDD8;
+        background: white;
+        padding: 1.15rem 1.25rem 1rem 1.25rem;
+    }}
+
+    .booking-note {{
+        background: #F4EEEA;
+        border-left: 3px solid {PEACH};
+        padding: 0.65rem 0.8rem;
+        border-radius: 8px;
+        color: {TEXT};
+        font-size: 0.82rem;
+        line-height: 1.45;
+        margin-top: 0.25rem;
+        margin-bottom: 0.55rem;
+    }}
+
+    @media (max-width: 900px) {{
+        .booking-gallery,
+        .booking-gallery.single,
+        div[data-testid="stForm"] {{
+            height: auto;
+            min-height: 0;
+        }}
+
+        .booking-gallery.two {{
+            grid-template-rows: 320px 320px;
+        }}
     }}
 
     div[data-testid="stMetric"] {{
@@ -1398,122 +1522,92 @@ elif page == "Book Your Glam":
         "and applicable service requirements."
     )
 
-    # ------------------------------------------------------------
-    # CUSTOMER-FACING BOOKING IMAGERY
-    # ------------------------------------------------------------
+    # Image and form sit beside each other at equal desktop height.
+    image_col, form_col = st.columns([1, 1], gap="large")
 
-    if BOOKING_IMAGES:
-        if len(BOOKING_IMAGES) >= 2:
-            img1, img2 = st.columns(2)
+    with image_col:
+        render_booking_gallery()
 
-            with img1:
-                try:
-                    st.image(
-                        str(BOOKING_IMAGES[0]),
-                        use_container_width=True,
+    with form_col:
+
+        with st.form("booking_form"):
+
+            st.markdown("### Tell FOYUMI what you need")
+
+            name = st.text_input("Full name")
+            contact = st.text_input("Phone or email")
+
+            st.markdown("#### Where would you like your makeup done?")
+
+            booking_location = st.radio(
+                "Booking location",
+                ["Studio", "Home Service"],
+                horizontal=True,
+                label_visibility="collapsed",
+            )
+
+            st.markdown(
+                """
+                <div class="booking-note">
+                    <strong>Home Service:</strong> We will confirm your exact
+                    location and the applicable home-service rate after your request.
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.markdown("#### What is the occasion?")
+
+            makeup_occasion = st.selectbox(
+                "Makeup occasion",
+                [
+                    "Event Guest",
+                    "Bridesmaid",
+                    "Birthday",
+                    "Clubbing / Night Out",
+                    "Other",
+                ],
+                label_visibility="collapsed",
+            )
+
+            requested_date = st.date_input("Preferred date")
+
+            notes = st.text_area(
+                "Additional information",
+                placeholder=(
+                    "Tell us anything we should know about your booking, "
+                    "such as your event time, preferred look or other details."
+                ),
+            )
+
+            submitted = st.form_submit_button(
+                "Submit Booking Request",
+                use_container_width=True,
+            )
+
+            if submitted:
+                if not name.strip() or not contact.strip():
+                    st.warning(
+                        "Please provide your name and a phone number or email "
+                        "so FOYUMI can follow up on the request."
                     )
-                except Exception:
-                    pass
-
-            with img2:
-                try:
-                    st.image(
-                        str(BOOKING_IMAGES[1]),
-                        use_container_width=True,
+                else:
+                    st.success(
+                        "Booking request captured in the prototype. "
+                        "FOYUMI will follow up to confirm your location, "
+                        "availability and booking details."
                     )
-                except Exception:
-                    pass
-        else:
-            try:
-                st.image(
-                    str(BOOKING_IMAGES[0]),
-                    use_container_width=True,
-                )
-            except Exception:
-                pass
 
-    # ------------------------------------------------------------
-    # BOOKING FORM
-    # ------------------------------------------------------------
+                    st.session_state["booking_request"] = {
+                        "name": name,
+                        "contact": contact,
+                        "booking_location": booking_location,
+                        "makeup_occasion": makeup_occasion,
+                        "date": str(requested_date),
+                        "notes": notes,
+                    }
 
-    with st.form("booking_form"):
-
-        st.markdown("### Tell FOYUMI what you need")
-
-        name = st.text_input("Full name")
-        contact = st.text_input("Phone or email")
-
-        st.markdown("#### Where would you like your makeup done?")
-
-        booking_location = st.radio(
-            "Booking location",
-            [
-                "Studio",
-                "Home Service",
-            ],
-            horizontal=True,
-            label_visibility="collapsed",
-        )
-
-        st.caption(
-            "For Home Service, our team will confirm your exact location "
-            "and applicable home-service rate after your request."
-        )
-
-        st.markdown("#### What is the occasion?")
-
-        makeup_occasion = st.selectbox(
-            "Makeup occasion",
-            [
-                "Event Guest",
-                "Bridesmaid",
-                "Birthday",
-                "Clubbing / Night Out",
-                "Other",
-            ],
-            label_visibility="collapsed",
-        )
-
-        requested_date = st.date_input("Preferred date")
-
-        notes = st.text_area(
-            "Additional information",
-            placeholder=(
-                "Tell us anything we should know about your booking, "
-                "such as your event time, preferred look or other details."
-            ),
-        )
-
-        submitted = st.form_submit_button(
-            "Submit Booking Request",
-            use_container_width=True,
-        )
-
-        if submitted:
-            if not name.strip() or not contact.strip():
-                st.warning(
-                    "Please provide your name and a phone number or email "
-                    "so FOYUMI can follow up on the request."
-                )
-            else:
-                # Deliberately separate booking location from occasion.
-                # Home-service axis is NOT requested from the customer here;
-                # FOYUMI can classify the actual location internally later.
-                st.success(
-                    "Booking request captured in the prototype. "
-                    "FOYUMI will follow up to confirm your location, "
-                    "availability and booking details."
-                )
-
-                st.session_state["booking_request"] = {
-                    "name": name,
-                    "contact": contact,
-                    "booking_location": booking_location,
-                    "makeup_occasion": makeup_occasion,
-                    "date": str(requested_date),
-                    "notes": notes,
-                }
-
+    # Full-width section underneath both the image and the form.
     st.markdown("---")
 
     st.markdown(
