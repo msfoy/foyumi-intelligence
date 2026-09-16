@@ -397,6 +397,420 @@ def render_booking_gallery():
         }
     }
 
+
+    /* ============================================================
+       MOBILE + RESPONSIVE READABILITY FIX
+       The deployed app uses a light FOYUMI interface. Streamlit's
+       responsive/mobile theme can dynamically apply muted foreground
+       colours. These rules deliberately pin foreground colours for
+       text, controls, charts, navigation and the mobile menu.
+       ============================================================ */
+
+    :root {
+        color-scheme: light !important;
+    }
+
+    html,
+    body {
+        background: #FAF6F3 !important;
+        color: #332723 !important;
+    }
+
+    /* Main application text */
+    [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewContainer"] > *,
+    .stApp,
+    .stApp * {
+        --text-color: #332723;
+    }
+
+    [data-testid="stAppViewContainer"] p,
+    [data-testid="stAppViewContainer"] li,
+    [data-testid="stAppViewContainer"] label,
+    [data-testid="stAppViewContainer"] span,
+    [data-testid="stAppViewContainer"] small,
+    [data-testid="stAppViewContainer"] div,
+    [data-testid="stAppViewContainer"] td,
+    [data-testid="stAppViewContainer"] th {
+        color: #332723;
+    }
+
+    /* Do not let generic div rules wash out SVG/chart content */
+    [data-testid="stAppViewContainer"] svg text,
+    [data-testid="stAppViewContainer"] svg tspan {
+        fill: #332723 !important;
+        color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    /* Headings */
+    [data-testid="stAppViewContainer"] h1,
+    [data-testid="stAppViewContainer"] h2,
+    [data-testid="stAppViewContainer"] h3,
+    [data-testid="stAppViewContainer"] h4,
+    [data-testid="stAppViewContainer"] h5,
+    [data-testid="stAppViewContainer"] h6 {
+        color: #5F4339 !important;
+        -webkit-text-fill-color: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    /* Streamlit captions / muted text */
+    [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"],
+    [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"] *,
+    [data-testid="stAppViewContainer"] .stCaption,
+    [data-testid="stAppViewContainer"] .stCaption * {
+        color: #625752 !important;
+        -webkit-text-fill-color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    /* Custom FOYUMI text classes */
+    .eyebrow {
+        color: #A66F58 !important;
+        -webkit-text-fill-color: #A66F58 !important;
+        opacity: 1 !important;
+    }
+
+    .section-text,
+    .section-text * {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    .metric-label {
+        color: #625752 !important;
+        -webkit-text-fill-color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    .metric-value {
+        color: #5F4339 !important;
+        -webkit-text-fill-color: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    .metric-note {
+        color: #625752 !important;
+        -webkit-text-fill-color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    .insight-card,
+    .insight-card *,
+    .action-card,
+    .action-card *,
+    .audience-card,
+    .audience-card *,
+    .pill {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    .action-title,
+    .audience-title {
+        color: #5F4339 !important;
+        -webkit-text-fill-color: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    /* ============================================================
+       ALL STREAMLIT FORM CONTROLS
+       ============================================================ */
+
+    /* Labels */
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] *,
+    [data-testid="stWidgetLabel"] p,
+    [data-testid="stWidgetLabel"] span,
+    [data-testid="stTextInputLabel"],
+    [data-testid="stTextAreaLabel"],
+    [data-testid="stSelectboxLabel"],
+    [data-testid="stDateInputLabel"] {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Text input / textarea containers */
+    [data-testid="stTextInput"] input,
+    [data-testid="stTextArea"] textarea,
+    [data-testid="stTextInput"] input[type="text"],
+    [data-testid="stTextArea"] textarea {
+        background-color: #FFFFFF !important;
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        border-color: #CDBEB7 !important;
+        opacity: 1 !important;
+        caret-color: #5F4339 !important;
+    }
+
+    [data-testid="stTextInput"] input::placeholder,
+    [data-testid="stTextArea"] textarea::placeholder {
+        color: #786B66 !important;
+        -webkit-text-fill-color: #786B66 !important;
+        opacity: 1 !important;
+    }
+
+    /* Selectbox closed state */
+    [data-testid="stSelectbox"] [role="combobox"],
+    [data-testid="stSelectbox"] [data-baseweb="select"],
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #332723 !important;
+        border-color: #CDBEB7 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stSelectbox"] [role="combobox"] *,
+    [data-testid="stSelectbox"] [data-baseweb="select"] * {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    /* Selectbox dropdown popup */
+    [role="listbox"],
+    [role="listbox"] *,
+    [role="option"],
+    [role="option"] * {
+        background-color: #FFFFFF !important;
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    [role="option"][aria-selected="true"],
+    [role="option"][aria-selected="true"] * {
+        background-color: #F4EEEA !important;
+        color: #5F4339 !important;
+        -webkit-text-fill-color: #5F4339 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Dropdown arrows / SVG icons */
+    [data-testid="stSelectbox"] svg,
+    [data-testid="stDateInput"] svg,
+    [data-testid="stTextInput"] svg,
+    [data-testid="stTextArea"] svg {
+        fill: #5F4339 !important;
+        color: #5F4339 !important;
+        stroke: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    /* Radio buttons */
+    [data-testid="stRadio"] label,
+    [data-testid="stRadio"] label *,
+    [data-testid="stRadio"] p,
+    [data-testid="stRadio"] span {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Date input */
+    [data-testid="stDateInput"] input {
+        background-color: #FFFFFF !important;
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        border-color: #CDBEB7 !important;
+        opacity: 1 !important;
+    }
+
+    /* Date picker popup */
+    [data-baseweb="calendar"],
+    [data-baseweb="calendar"] *,
+    [data-baseweb="calendar"] button,
+    [data-baseweb="calendar"] button * {
+        background-color: #FFFFFF !important;
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    /* Submit/action buttons */
+    [data-testid="stFormSubmitButton"] button,
+    [data-testid="stFormSubmitButton"] button *,
+    [data-testid="stButton"] button,
+    [data-testid="stButton"] button * {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stFormSubmitButton"] button,
+    [data-testid="stButton"] button {
+        background-color: #6F4E45 !important;
+        border-color: #6F4E45 !important;
+    }
+
+    /* ============================================================
+       CHARTS — AXES, LEGENDS, TOOLTIP TEXT
+       ============================================================ */
+
+    [data-testid="stPlotlyChart"] {
+        background: #FFFFFF !important;
+        border-radius: 14px;
+    }
+
+    [data-testid="stPlotlyChart"] .js-plotly-plot,
+    [data-testid="stPlotlyChart"] .plotly {
+        color: #332723 !important;
+    }
+
+    [data-testid="stPlotlyChart"] svg text,
+    [data-testid="stPlotlyChart"] svg tspan {
+        fill: #332723 !important;
+        color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stPlotlyChart"] .legendtext {
+        fill: #332723 !important;
+    }
+
+    [data-testid="stPlotlyChart"] .xtick text,
+    [data-testid="stPlotlyChart"] .ytick text,
+    [data-testid="stPlotlyChart"] .gtitle,
+    [data-testid="stPlotlyChart"] .axis-title,
+    [data-testid="stPlotlyChart"] .legendtext {
+        fill: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    /* ============================================================
+       SIDEBAR + MOBILE MENU BUTTON
+       ============================================================ */
+
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"] * {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stSidebar"] {
+        background: #FFFFFF !important;
+    }
+
+    section[data-testid="stSidebar"] [role="radiogroup"] label,
+    section[data-testid="stSidebar"] [role="radiogroup"] label *,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] *,
+    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] * {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Streamlit's app header / hamburger toggle */
+    header[data-testid="stHeader"] {
+        background: #FAF6F3 !important;
+    }
+
+    header[data-testid="stHeader"] button,
+    header[data-testid="stHeader"] button *,
+    header[data-testid="stHeader"] svg,
+    header[data-testid="stHeader"] svg * {
+        color: #5F4339 !important;
+        fill: #5F4339 !important;
+        stroke: #5F4339 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Some Streamlit versions put the menu button outside stHeader */
+    [data-testid="stToolbar"] button,
+    [data-testid="stToolbar"] button *,
+    [data-testid="stToolbar"] svg,
+    [data-testid="stToolbar"] svg * {
+        color: #5F4339 !important;
+        fill: #5F4339 !important;
+        stroke: #5F4339 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* ============================================================
+       MOBILE REINFORCEMENT
+       ============================================================ */
+
+    @media (max-width: 768px) {
+
+        body,
+        .stApp,
+        [data-testid="stAppViewContainer"],
+        [data-testid="stAppViewContainer"] > div {
+            background: #FAF6F3 !important;
+            color: #332723 !important;
+        }
+
+        [data-testid="stAppViewContainer"] p,
+        [data-testid="stAppViewContainer"] li,
+        [data-testid="stAppViewContainer"] label,
+        [data-testid="stAppViewContainer"] span,
+        [data-testid="stAppViewContainer"] small {
+            color: #332723 !important;
+            -webkit-text-fill-color: #332723 !important;
+            opacity: 1 !important;
+        }
+
+        [data-testid="stAppViewContainer"] h1,
+        [data-testid="stAppViewContainer"] h2,
+        [data-testid="stAppViewContainer"] h3,
+        [data-testid="stAppViewContainer"] h4,
+        [data-testid="stAppViewContainer"] h5,
+        [data-testid="stAppViewContainer"] h6 {
+            color: #5F4339 !important;
+            -webkit-text-fill-color: #5F4339 !important;
+            opacity: 1 !important;
+        }
+
+        [data-testid="stAppViewContainer"] svg text,
+        [data-testid="stAppViewContainer"] svg tspan {
+            fill: #332723 !important;
+            color: #332723 !important;
+            opacity: 1 !important;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #FFFFFF !important;
+        }
+
+        header[data-testid="stHeader"] {
+            background: #FAF6F3 !important;
+        }
+
+        /* Larger, clearer touch targets */
+        section[data-testid="stSidebar"] [role="radiogroup"] label {
+            min-height: 42px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        [data-testid="stFormSubmitButton"] button,
+        [data-testid="stButton"] button {
+            min-height: 44px !important;
+        }
+
+        /* Input text must remain visible while typing */
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stSelectbox"] [role="combobox"],
+        [data-testid="stDateInput"] input {
+            color: #332723 !important;
+            -webkit-text-fill-color: #332723 !important;
+            background: #FFFFFF !important;
+            opacity: 1 !important;
+        }
+    }
+
 </style>
         """,
         unsafe_allow_html=True,
