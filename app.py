@@ -76,40 +76,83 @@ BOOKING_IMAGE = find_booking_image()
 
 
 def render_booking_gallery():
-    """
-    Render the single FOYUMI booking image.
-    The fixed tight crop is preferred so the subject's full head remains
-    visible while reducing the amount of lower-body/chest area shown.
-    """
-    if BOOKING_IMAGE is not None and BOOKING_IMAGE.exists():
-        try:
-            st.image(
-                str(BOOKING_IMAGE),
-                use_container_width=True,
-            )
-            return
-        except Exception:
-            pass
+    """Render the fixed booking image at a controlled aspect ratio."""
+    if BOOKING_IMAGE is None or not BOOKING_IMAGE.exists():
+        st.markdown(
+            """
+            <div class="booking-image-fallback">
+                <div>
+                    <div class="eyebrow">FOYUMI</div>
+                    <div class="action-title">Your glam journey starts here.</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        return
 
-    # Keep the layout intact if the image asset is temporarily unavailable.
+    # Use CSS on the image element so its rendered height matches the
+    # neighboring booking card instead of inheriting the portrait height.
     st.markdown(
         """
-        <div class="action-card" style="
-            min-height: 520px;
+        <style>
+        .booking-image-frame {
+            width: 100%;
+            height: 650px;
+            border: 1px solid rgba(111, 78, 69, 0.18);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f4f0ec;
+        }
+
+        .booking-image-frame img {
+            width: 100%;
             height: 100%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            text-align:center;
-        ">
-            <div>
-                <div class="eyebrow">FOYUMI</div>
-                <div class="action-title">Your glam journey starts here.</div>
-            </div>
-        </div>
+            object-fit: cover;
+            object-position: center 28%;
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .booking-image-frame {
+                height: 520px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .booking-image-frame {
+                height: 420px;
+            }
+        }
+        </style>
         """,
         unsafe_allow_html=True,
     )
+
+    # Streamlit's image component does not expose object-position, so
+    # render the image itself as a base64 data URI in the controlled frame.
+    import base64
+    mime = {
+        ".webp": "image/webp",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+    }.get(BOOKING_IMAGE.suffix.lower(), "image/webp")
+
+    try:
+        encoded = base64.b64encode(BOOKING_IMAGE.read_bytes()).decode("utf-8")
+        st.markdown(
+            f"""
+            <div class="booking-image-frame">
+                <img src="data:{mime};base64,{encoded}" alt="FOYUMI beauty work">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    except Exception:
+        st.image(str(BOOKING_IMAGE), use_container_width=True)
+
+
 
 # ============================================================
 # FOYUMI BRAND SYSTEM
