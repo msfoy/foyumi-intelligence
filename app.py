@@ -42,107 +42,36 @@ image_files = sorted(
     ]
 ) if IMAGE_DIR.exists() else []
 
-# Customer-facing booking image.
-# Prefer the dedicated booking asset when present, but always fall back to
-# the existing IMG_2151 asset already in the public GitHub repository.
-BOOKING_IMAGE_CANDIDATES = [
-    IMAGE_DIR / "IMG_2151_BOOKING.webp",
-    IMAGE_DIR / "IMG_2151.JPG.webp",
-    IMAGE_DIR / "IMG_2151.JPG.jpeg",
-    IMAGE_DIR / "IMG_2151.jpg.webp",
-    IMAGE_DIR / "IMG_2151.jpg",
-    IMAGE_DIR / "IMG_2151.jpeg",
-]
+# Preferred imagery for the customer booking experience.
+# Book Your Glam uses one fixed, tight-cropped image so the composition
+# remains consistent on Streamlit Cloud.
+def find_booking_image():
+    if not IMAGE_DIR.exists():
+        return None
 
+    preferred = IMAGE_DIR / "IMG_2151_BOOKING_TIGHT.webp"
+    if preferred.exists():
+        return preferred
 
-def get_booking_image():
-    """Return the first available IMG_2151 asset."""
-    for candidate in BOOKING_IMAGE_CANDIDATES:
-        if candidate.exists() and candidate.is_file():
+    # Safe fallback to the existing deployed image if the tight crop
+    # has not yet been uploaded to GitHub.
+    fallback_names = [
+        "IMG_2151.JPG.webp",
+        "IMG_2151.JPG.jpeg",
+        "IMG_2151.jpg.webp",
+        "IMG_2151.jpg",
+        "IMG_2151.jpeg",
+    ]
+
+    for name in fallback_names:
+        candidate = IMAGE_DIR / name
+        if candidate.exists():
             return candidate
+
     return None
 
 
-def render_booking_gallery():
-    """
-    Render IMG_2151 as a top-focused square image.
-
-    The crop is performed at runtime from the portrait source so the
-    subject's full head remains visible while more of the lower chest
-    is cropped. This avoids depending on a second image file in GitHub.
-    """
-    source = get_booking_image()
-
-    if source is not None:
-        try:
-            with Image.open(source) as original:
-                original = original.convert("RGB")
-
-                width, height = original.size
-                crop_size = min(width, height)
-
-                # Top-aligned square crop: preserve the full head and
-                # remove more of the lower body.
-                left = max((width - crop_size) // 2, 0)
-                top = 0
-                right = min(left + crop_size, width)
-                bottom = min(top + crop_size, height)
-
-                cropped = original.crop(
-                    (left, top, right, bottom)
-                )
-
-                # Encode in memory so Streamlit does not need to serve
-                # a second file or depend on a fragile asset URL.
-                import io
-
-                buffer = io.BytesIO()
-                cropped.save(
-                    buffer,
-                    format="WEBP",
-                    quality=92,
-                    method=6,
-                )
-
-                encoded = base64.b64encode(
-                    buffer.getvalue()
-                ).decode("ascii")
-
-            st.markdown(
-                f"""
-                <div class="booking-gallery single">
-                    <img
-                        src="data:image/webp;base64,{encoded}"
-                        alt="FOYUMI beauty work"
-                    >
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            return
-
-        except Exception:
-            pass
-
-    # Never show a broken-image icon if the asset is unavailable.
-    st.markdown(
-        """
-        <div class="booking-gallery single"
-             style="display:flex;align-items:center;justify-content:center;">
-            <div style="text-align:center;padding:2rem;color:#786B66;">
-                <div style="font-size:0.72rem;letter-spacing:0.16em;
-                            text-transform:uppercase;font-weight:700;">
-                    FOYUMI
-                </div>
-                <div style="margin-top:0.5rem;">
-                    Your glam journey starts here.
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
+BOOKING_IMAGE = find_booking_image()
 
 # ============================================================
 # FOYUMI BRAND SYSTEM
@@ -341,7 +270,6 @@ st.markdown(
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: top center;
         display: block;
         border-radius: 10px;
     }}
