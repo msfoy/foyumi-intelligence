@@ -124,7 +124,280 @@ def render_booking_gallery():
                 height: 420px;
             }
         }
-        </style>
+        
+    /* ============================================================
+       SIDEBAR NAVIGATION — MOBILE ACCESSIBILITY
+       Keep navigation text dark and readable on light backgrounds.
+       ============================================================ */
+
+    section[data-testid="stSidebar"] {
+        color: #332C29 !important;
+    }
+
+    section[data-testid="stSidebar"] * {
+        -webkit-text-fill-color: #332C29;
+    }
+
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] label p,
+    section[data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+    section[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+        color: #332C29 !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stSidebar"] [role="radiogroup"] label {
+        color: #332C29 !important;
+        opacity: 1 !important;
+        font-weight: 500 !important;
+    }
+
+    section[data-testid="stSidebar"] [role="radiogroup"] label p,
+    section[data-testid="stSidebar"] [role="radiogroup"] label span {
+        color: #332C29 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    section[data-testid="stSidebar"] [role="radiogroup"] [data-testid="stMarkdownContainer"] p {
+        color: #332C29 !important;
+        opacity: 1 !important;
+    }
+
+    /* Make the selected item clearly readable without changing the
+       existing FOYUMI accent colour treatment. */
+    section[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+        color: #5F4339 !important;
+        font-weight: 600 !important;
+    }
+
+    section[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) p,
+    section[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) span {
+        color: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    @media (max-width: 768px) {
+        section[data-testid="stSidebar"] {
+            background: #FFFFFF !important;
+        }
+
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] label p,
+        section[data-testid="stSidebar"] [role="radiogroup"] label,
+        section[data-testid="stSidebar"] [role="radiogroup"] label p,
+        section[data-testid="stSidebar"] [role="radiogroup"] label span {
+            color: #332C29 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #332C29 !important;
+        }
+
+        section[data-testid="stSidebar"] [role="radiogroup"] {
+            gap: 0.15rem !important;
+        }
+    }
+
+
+    /* ============================================================
+       GLOBAL MOBILE READABILITY
+       Streamlit can apply low-opacity / muted foreground colours on
+       narrow screens. FOYUMI uses a light cream interface, so all
+       user-facing text needs a strong, explicit foreground colour.
+       ============================================================ */
+
+    html, body, [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewContainer"] *,
+    .stApp {
+        color: #332723 !important;
+    }
+
+    /* Main text hierarchy */
+    [data-testid="stAppViewContainer"] p,
+    [data-testid="stAppViewContainer"] li,
+    [data-testid="stAppViewContainer"] span,
+    [data-testid="stAppViewContainer"] label,
+    [data-testid="stAppViewContainer"] small,
+    [data-testid="stAppViewContainer"] div[data-testid="stMarkdownContainer"] {
+        color: #332723;
+    }
+
+    [data-testid="stAppViewContainer"] h1,
+    [data-testid="stAppViewContainer"] h2,
+    [data-testid="stAppViewContainer"] h3,
+    [data-testid="stAppViewContainer"] h4,
+    [data-testid="stAppViewContainer"] h5,
+    [data-testid="stAppViewContainer"] h6 {
+        color: #5F4339 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #5F4339 !important;
+    }
+
+    /* Captions and secondary copy must remain visible */
+    [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"],
+    [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"] *,
+    [data-testid="stAppViewContainer"] .stCaption,
+    [data-testid="stAppViewContainer"] .stCaption * {
+        color: #625752 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #625752 !important;
+    }
+
+    /* Streamlit widget labels */
+    [data-testid="stAppViewContainer"] [data-testid="stWidgetLabel"],
+    [data-testid="stAppViewContainer"] [data-testid="stWidgetLabel"] *,
+    [data-testid="stAppViewContainer"] .stTextInput label,
+    [data-testid="stAppViewContainer"] .stSelectbox label,
+    [data-testid="stAppViewContainer"] .stDateInput label,
+    [data-testid="stAppViewContainer"] .stTextArea label,
+    [data-testid="stAppViewContainer"] .stRadio label {
+        color: #332723 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #332723 !important;
+    }
+
+    /* Inputs, select boxes and text areas */
+    [data-testid="stAppViewContainer"] input,
+    [data-testid="stAppViewContainer"] textarea,
+    [data-testid="stAppViewContainer"] select,
+    [data-testid="stAppViewContainer"] [role="combobox"],
+    [data-testid="stAppViewContainer"] [role="textbox"] {
+        color: #332723 !important;
+        -webkit-text-fill-color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stAppViewContainer"] input::placeholder,
+    [data-testid="stAppViewContainer"] textarea::placeholder {
+        color: #625752 !important;
+        -webkit-text-fill-color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    /* Radio / checkbox text */
+    [data-testid="stAppViewContainer"] [role="radiogroup"] label,
+    [data-testid="stAppViewContainer"] [role="radiogroup"] label *,
+    [data-testid="stAppViewContainer"] [role="checkbox"] label,
+    [data-testid="stAppViewContainer"] [role="checkbox"] label * {
+        color: #332723 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #332723 !important;
+    }
+
+    /* Buttons */
+    [data-testid="stAppViewContainer"] button,
+    [data-testid="stAppViewContainer"] button *,
+    [data-testid="baseButton-secondary"],
+    [data-testid="baseButton-secondary"] *,
+    [data-testid="baseButton-primary"],
+    [data-testid="baseButton-primary"] * {
+        color: #332723 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #332723 !important;
+    }
+
+    /* Expanders */
+    [data-testid="stAppViewContainer"] [data-testid="stExpander"],
+    [data-testid="stAppViewContainer"] [data-testid="stExpander"] summary,
+    [data-testid="stAppViewContainer"] [data-testid="stExpander"] summary *,
+    [data-testid="stAppViewContainer"] [data-testid="stExpanderDetails"] * {
+        color: #332723 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #332723 !important;
+    }
+
+    /* Metric cards and custom cards */
+    [data-testid="stAppViewContainer"] .metric-label {
+        color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stAppViewContainer"] .metric-value {
+        color: #5F4339 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stAppViewContainer"] .metric-note {
+        color: #625752 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stAppViewContainer"] .insight-card,
+    [data-testid="stAppViewContainer"] .insight-card *,
+    [data-testid="stAppViewContainer"] .action-card,
+    [data-testid="stAppViewContainer"] .action-card * {
+        color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stAppViewContainer"] .eyebrow {
+        color: #A66F58 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #A66F58 !important;
+    }
+
+    /* Tables/dataframes */
+    [data-testid="stAppViewContainer"] [data-testid="stDataFrame"],
+    [data-testid="stAppViewContainer"] [data-testid="stDataFrame"] *,
+    [data-testid="stAppViewContainer"] table,
+    [data-testid="stAppViewContainer"] table * {
+        color: #332723 !important;
+        opacity: 1 !important;
+    }
+
+    /* Mobile-specific reinforcement */
+    @media (max-width: 768px) {
+        [data-testid="stAppViewContainer"],
+        [data-testid="stAppViewContainer"] {
+            color: #332723 !important;
+        }
+
+        [data-testid="stAppViewContainer"] p,
+        [data-testid="stAppViewContainer"] li,
+        [data-testid="stAppViewContainer"] label,
+        [data-testid="stAppViewContainer"] span {
+            color: #332723 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #332723 !important;
+        }
+
+        [data-testid="stAppViewContainer"] h1,
+        [data-testid="stAppViewContainer"] h2,
+        [data-testid="stAppViewContainer"] h3,
+        [data-testid="stAppViewContainer"] h4,
+        [data-testid="stAppViewContainer"] h5,
+        [data-testid="stAppViewContainer"] h6 {
+            color: #5F4339 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #5F4339 !important;
+        }
+
+        [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"],
+        [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"] *,
+        [data-testid="stAppViewContainer"] .stCaption,
+        [data-testid="stAppViewContainer"] .stCaption * {
+            color: #625752 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #625752 !important;
+        }
+
+        /* Keep Streamlit's mobile controls legible */
+        [data-testid="stAppViewContainer"] input,
+        [data-testid="stAppViewContainer"] textarea,
+        [data-testid="stAppViewContainer"] [role="combobox"],
+        [data-testid="stAppViewContainer"] [role="textbox"] {
+            color: #332723 !important;
+            -webkit-text-fill-color: #332723 !important;
+        }
+
+        [data-testid="stAppViewContainer"] input::placeholder,
+        [data-testid="stAppViewContainer"] textarea::placeholder {
+            color: #625752 !important;
+            -webkit-text-fill-color: #625752 !important;
+            opacity: 1 !important;
+        }
+    }
+
+</style>
         """,
         unsafe_allow_html=True,
     )
@@ -1294,12 +1567,16 @@ elif page == "Demand Planning":
         )
     )
 
+    # Planning range boundaries: connect the upper dots and lower dots
+    # across October → November → December so the range reads visually
+    # as a continuous planning band rather than three isolated points.
     fig.add_trace(
         go.Scatter(
             x=forecast_chart["Month"],
             y=forecast_chart["Upper"],
-            mode="markers",
+            mode="lines+markers",
             name="Planning Upper",
+            line=dict(color=BROWN, width=2),
             marker=dict(color=BROWN, size=9),
         )
     )
@@ -1308,8 +1585,9 @@ elif page == "Demand Planning":
         go.Scatter(
             x=forecast_chart["Month"],
             y=forecast_chart["Lower"],
-            mode="markers",
+            mode="lines+markers",
             name="Planning Lower",
+            line=dict(color=SAGE, width=2),
             marker=dict(color=SAGE, size=9),
         )
     )
